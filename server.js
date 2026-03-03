@@ -93,7 +93,7 @@ app.post('/api/login', (req, res) => {
   const user = users.find(u => u.username === username);
 
   if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    return res.status(401).json({ error: 'Credenciales inválidas' });
   }
 
   const token = jwt.sign({ id: user.id, role: user.role }, 'secret_key', { expiresIn: '24h' });
@@ -108,13 +108,13 @@ app.get('/api/content', (req, res) => {
 app.get('/api/content/:id', (req, res) => {
   const data = readData();
   const content = data.find(item => item.id === parseInt(req.params.id));
-  if (!content) return res.status(404).json({ error: 'Not found' });
+  if (!content) return res.status(404).json({ error: 'No encontrado' });
   res.json(content);
 });
 
 app.post('/api/content', verifyToken, upload.single('file'), (req, res) => {
   if (req.userRole !== 'admin') {
-    return res.status(403).json({ error: 'Only admins can create content' });
+    return res.status(403).json({ error: 'Solo los admins pueden crear contenido' });
   }
 
   const { title, description } = req.body;
@@ -138,10 +138,10 @@ app.post('/api/content', verifyToken, upload.single('file'), (req, res) => {
 
 app.post('/api/content/import', verifyToken, upload.single('jsonFile'), (req, res) => {
   if (req.userRole !== 'admin') {
-    return res.status(403).json({ error: 'Only admins can import content' });
+    return res.status(403).json({ error: 'Solo los admins pueden importar contenido' });
   }
   if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+    return res.status(400).json({ error: 'No se ha subido ningún archivo JSON' });
   }
 
   try {
@@ -170,18 +170,18 @@ app.post('/api/content/import', verifyToken, upload.single('jsonFile'), (req, re
       fs.unlinkSync(req.file.path);
     }
     console.error('Import error:', err);
-    res.status(400).json({ error: 'Invalid JSON', details: err.message });
+    res.status(400).json({ error: 'Archivo JSON inválido', details: err.message });
   }
 });
 
 app.put('/api/content/:id', verifyToken, upload.single('file'), (req, res) => {
   if (req.userRole !== 'admin') {
-    return res.status(403).json({ error: 'Only admins can update content' });
+    return res.status(403).json({ error: 'Solo los admins pueden actualizar contenido' });
   }
 
   const data = readData();
   const index = data.findIndex(item => item.id === parseInt(req.params.id));
-  if (index === -1) return res.status(404).json({ error: 'Not found' });
+  if (index === -1) return res.status(404).json({ error: 'No encontrado' });
 
   const { title, description } = req.body;
   data[index].title = title || data[index].title;
@@ -198,12 +198,12 @@ app.put('/api/content/:id', verifyToken, upload.single('file'), (req, res) => {
 
 app.delete('/api/content/:id', verifyToken, (req, res) => {
   if (req.userRole !== 'admin') {
-    return res.status(403).json({ error: 'Only admins can delete content' });
+    return res.status(403).json({ error: 'Solo los admins pueden eliminar contenido' });
   }
 
   const data = readData();
   const index = data.findIndex(item => item.id === parseInt(req.params.id));
-  if (index === -1) return res.status(404).json({ error: 'Not found' });
+  if (index === -1) return res.status(404).json({ error: 'No encontrado' });
 
   if (data[index].file) {
     const filePath = path.join(__dirname, data[index].file);
@@ -215,7 +215,7 @@ app.delete('/api/content/:id', verifyToken, (req, res) => {
   data.splice(index, 1);
   saveData(data);
 
-  res.json({ message: 'Deleted successfully' });
+  res.json({ message: 'Eliminado' });
 });
 
 app.listen(PORT, () => {
