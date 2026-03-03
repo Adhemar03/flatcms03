@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Título de la noticia",
+    "description": "Texto completo o resumen de la noticia.",
+    "file": null,       // opcional: si ya subiste un archivo y quieres hacer referencia a la ruta en uploads
+    "fileName": null    // opcional: nombre del archivo asociado
+  },
+  {
+    "title": "Otra noticia",
+    "description": "Otro texto..."
+  }
+]
